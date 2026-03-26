@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Loader2 } from "lucide-react";
+import { addToCartAndRedirect } from "@/lib/cart";
 
 interface Variant {
   id: string;
@@ -15,23 +16,34 @@ interface Props {
 }
 
 export default function AddToCartClient({ sizes, variants }: Props) {
-  const [selectedSize, setSelectedSize] = useState("");
+  const [selectedSize, setSelectedSize] = useState(sizes.length === 1 ? sizes[0] : "");
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const selectedVariant = variants.find((v) => v.title === selectedSize) ?? variants[0];
+  const selectedVariant =
+    variants.find((v) => v.title === selectedSize) ??
+    (variants.length === 1 ? variants[0] : undefined);
 
-  const handleAddToCart = () => {
-    if (!selectedVariant) return;
-    // TODO: wire to Shopify cart API / iron-session
-    console.log("Add to cart:", { variantId: selectedVariant.id, quantity });
-    setAdded(true);
-    setTimeout(() => setAdded(false), 2000);
+  const handleAddToCart = async () => {
+    if (!selectedVariant) {
+      setError("Please select a size.");
+      return;
+    }
+    setError("");
+    setLoading(true);
+    try {
+      await addToCartAndRedirect(selectedVariant.id, quantity);
+    } catch (e) {
+      console.error(e);
+      setError("Something went wrong. Please try again.");
+      setLoading(false);
+    }
   };
 
   return (
     <>
-      {sizes.length > 0 && (
+      {sizes.length > 1 && (
         <div className="mt-8">
           <label className="block text-sm font-semibold text-[#1A1A1A] mb-3">Size</label>
           <div className="flex flex-wrap gap-2">
@@ -78,12 +90,22 @@ export default function AddToCartClient({ sizes, variants }: Props) {
         </div>
       </div>
 
+      {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
+
       <button
         onClick={handleAddToCart}
-        className="mt-8 w-full bg-[#D35400] hover:bg-[#b84700] text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-lg"
+        disabled={loading}
+        className="mt-8 w-full bg-[#D35400] hover:bg-[#b84700] disabled:opacity-60 text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-lg"
       >
-        <ShoppingCart className="w-5 h-5" />
-        {added ? "Added!" : "Add to Cart"}
+        {loading ? (
+          <>
+            <Loader2 className="w-5 h-5 animate-spin" /> Taking you to checkout...
+          </>
+        ) : (
+          <>
+            <ShoppingCart className="w-5 h-5" /> Add to Cart
+          </>
+        )}
       </button>
     </>
   );
