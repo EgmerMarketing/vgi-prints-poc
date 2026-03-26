@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-heading: "Playfair Display", serif;
+  --font-body: "Lato", sans-serif;
+  --color-brand-orange: #D35400;
+  --color-brand-green: #2D5A2D;
+  --color-brand-charcoal: #1A1A1A;
+  --color-brand-warm-gray: #F5F3EF;
+}
+
+body {
+  font-family: var(--font-body);
+  color: #1A1A1A;
+  background: #ffffff;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
