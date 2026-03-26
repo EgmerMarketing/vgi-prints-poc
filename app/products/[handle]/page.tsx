@@ -48,6 +48,10 @@ export default async function ProductDetailPage({
           <AddToCartClient
             sizes={sizes}
             variants={product.variants.edges.map((e) => e.node)}
+            productHandle={handle}
+            title={product.title}
+            price={price}
+            image={image}
           />
 
           {/* Trust strip */}

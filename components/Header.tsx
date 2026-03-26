@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { ShoppingCart, Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useCart } from "@/lib/cart-context";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { totalCount } = useCart();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -45,12 +47,14 @@ export default function Header() {
 
           {/* Cart + mobile toggle */}
           <div className="flex items-center gap-4">
-            <button className="relative p-2 text-gray-300 hover:text-white transition-colors">
+            <Link href="/cart" className="relative p-2 text-gray-300 hover:text-white transition-colors">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-0.5 -right-0.5 bg-[#D35400] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                0
-              </span>
-            </button>
+              {totalCount > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 bg-[#D35400] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  {totalCount > 9 ? "9+" : totalCount}
+                </span>
+              )}
+            </Link>
             <button
               className="md:hidden p-2 text-gray-300 hover:text-white"
               onClick={() => setMobileOpen(!mobileOpen)}

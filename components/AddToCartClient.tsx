@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ShoppingCart, Loader2 } from "lucide-react";
-import { addToCartAndRedirect } from "@/lib/cart";
+import { ShoppingCart, Check } from "lucide-react";
+import { useCart } from "@/lib/cart-context";
+import { useRouter } from "next/navigation";
 
 interface Variant {
   id: string;
@@ -13,32 +14,42 @@ interface Variant {
 interface Props {
   sizes: string[];
   variants: Variant[];
+  productHandle: string;
+  title: string;
+  price: number;
+  image: string;
 }
 
-export default function AddToCartClient({ sizes, variants }: Props) {
+export default function AddToCartClient({ sizes, variants, productHandle, title, price, image }: Props) {
   const [selectedSize, setSelectedSize] = useState(sizes.length === 1 ? sizes[0] : "");
   const [quantity, setQuantity] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [added, setAdded] = useState(false);
   const [error, setError] = useState("");
+  const { addItem } = useCart();
+  const router = useRouter();
 
   const selectedVariant =
     variants.find((v) => v.title === selectedSize) ??
     (variants.length === 1 ? variants[0] : undefined);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (!selectedVariant) {
       setError("Please select a size.");
       return;
     }
     setError("");
-    setLoading(true);
-    try {
-      await addToCartAndRedirect(selectedVariant.id, quantity);
-    } catch (e) {
-      console.error(e);
-      setError("Something went wrong. Please try again.");
-      setLoading(false);
+    for (let i = 0; i < quantity; i++) {
+      addItem({
+        variantId: selectedVariant.id,
+        productHandle,
+        title,
+        variantTitle: selectedVariant.title,
+        price,
+        image,
+      });
     }
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -92,21 +103,30 @@ export default function AddToCartClient({ sizes, variants }: Props) {
 
       {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
 
-      <button
-        onClick={handleAddToCart}
-        disabled={loading}
-        className="mt-8 w-full bg-[#D35400] hover:bg-[#b84700] disabled:opacity-60 text-white font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-lg"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="w-5 h-5 animate-spin" /> Taking you to checkout...
-          </>
-        ) : (
-          <>
-            <ShoppingCart className="w-5 h-5" /> Add to Cart
-          </>
+      <div className="mt-8 flex gap-3">
+        <button
+          onClick={handleAddToCart}
+          className={`flex-1 font-bold py-4 rounded-lg transition-colors flex items-center justify-center gap-2 text-lg ${
+            added
+              ? "bg-[#2D5A2D] text-white"
+              : "bg-[#D35400] hover:bg-[#b84700] text-white"
+          }`}
+        >
+          {added ? (
+            <><Check className="w-5 h-5" /> Added!</>
+          ) : (
+            <><ShoppingCart className="w-5 h-5" /> Add to Cart</>
+          )}
+        </button>
+        {added && (
+          <button
+            onClick={() => router.push("/cart")}
+            className="px-6 py-4 rounded-lg border-2 border-[#1A1A1A] text-[#1A1A1A] font-bold hover:bg-[#1A1A1A] hover:text-white transition-colors text-sm"
+          >
+            View Cart
+          </button>
         )}
-      </button>
+      </div>
     </>
   );
 }
