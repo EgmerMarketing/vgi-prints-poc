@@ -21,10 +21,10 @@ export default function UnlockPage() {
 
   if (!collection) {
     return (
-      <div className="flex items-center justify-center py-32">
+      <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="font-heading text-2xl font-bold text-[#1A1A1A]">Store not found</h1>
-          <p className="text-gray-500 mt-2">This school store doesn&apos;t exist.</p>
+          <h1 className="font-heading text-2xl font-bold text-white">Store not found</h1>
+          <p className="text-[#888888] mt-2">This school store doesn&apos;t exist.</p>
         </div>
       </div>
     );
@@ -42,24 +42,22 @@ export default function UnlockPage() {
   }
 
   return (
-    <div className="flex items-center justify-center py-20 px-4 bg-[#F5F3EF] min-h-[60vh]">
-      <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 w-full max-w-md text-center">
+    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center px-4 py-20">
+      <div className="bg-[#141414] border border-[#2A2A2A] rounded-2xl p-8 sm:p-12 w-full max-w-md text-center">
         {/* Logo */}
-        <div className="mb-6">
-          <span className="font-heading text-3xl font-bold tracking-wider text-[#1A1A1A]">
-            v<span className="text-[#D35400]">.</span>g
-            <span className="text-[#D35400]">.</span>i
-          </span>
+        <div className="mb-6 flex justify-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/vgi-logo.png" alt="VGI Prints" className="h-8 w-auto" />
         </div>
 
-        <div className="w-16 h-16 bg-[#F5F3EF] rounded-full flex items-center justify-center mx-auto mb-6">
-          <Lock className="w-7 h-7 text-[#D35400]" />
+        <div className="w-16 h-16 bg-[#1E1E1E] border border-[#2A2A2A] rounded-full flex items-center justify-center mx-auto mb-6">
+          <Lock className="w-7 h-7 text-[#E85D26]" />
         </div>
 
-        <h1 className="font-heading text-2xl font-bold text-[#1A1A1A] mb-2">
+        <h1 className="font-heading text-2xl font-bold text-white mb-2">
           {collection.name}
         </h1>
-        <p className="text-gray-500 text-sm mb-8">
+        <p className="text-[#888888] text-sm mb-8">
           This store is passcode-protected. Enter your code to access exclusive gear.
         </p>
 
@@ -72,11 +70,11 @@ export default function UnlockPage() {
               setError("");
             }}
             placeholder="Enter passcode"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D35400] focus:border-transparent text-center text-lg tracking-widest"
+            className="w-full px-4 py-3 bg-[#0A0A0A] border border-[#2A2A2A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#E85D26] focus:border-transparent text-center text-lg tracking-widest text-white placeholder:text-[#888888]"
           />
 
           {error && (
-            <div className="flex items-center justify-center gap-2 text-red-600 text-sm">
+            <div className="flex items-center justify-center gap-2 text-red-400 text-sm">
               <AlertCircle className="w-4 h-4" />
               {error}
             </div>
@@ -84,7 +82,7 @@ export default function UnlockPage() {
 
           <button
             type="submit"
-            className="w-full bg-[#D35400] hover:bg-[#b84700] text-white font-bold py-3 rounded-lg transition-colors"
+            className="w-full bg-[#E85D26] hover:bg-[#c94d1e] text-white font-bold py-3 rounded-lg transition-colors uppercase tracking-widest text-sm"
           >
             Unlock Store
           </button>

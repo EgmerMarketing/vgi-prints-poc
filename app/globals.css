@@ -3,16 +3,35 @@
 @theme inline {
   --font-heading: "Playfair Display", serif;
   --font-body: "Lato", sans-serif;
-  --color-brand-orange: #D35400;
-  --color-brand-green: #2D5A2D;
-  --color-brand-charcoal: #1A1A1A;
-  --color-brand-warm-gray: #F5F3EF;
+  --color-brand-orange: #E85D26;
+  --color-brand-gold: #C4832A;
+  --color-brand-dark: #0A0A0A;
+  --color-brand-surface: #141414;
+  --color-brand-border: #2A2A2A;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   font-family: var(--font-body);
-  color: #1A1A1A;
-  background: #ffffff;
+  color: #ffffff;
+  background: #0A0A0A;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 39px,
+    rgba(255, 255, 255, 0.015) 39px,
+    rgba(255, 255, 255, 0.015) 40px
+  ),
+  repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 39px,
+    rgba(255, 255, 255, 0.015) 39px,
+    rgba(255, 255, 255, 0.015) 40px
+  );
 }
 
 .font-heading {

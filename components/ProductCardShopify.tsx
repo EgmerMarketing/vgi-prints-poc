@@ -16,7 +16,7 @@ export default function ProductCardShopify({ product, showBadge }: Props) {
     !product.collections.edges.some((e) => e.node.handle === "frontpage");
 
   return (
-    <div className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100">
+    <div className="group bg-[#141414] border border-[#2A2A2A] rounded-xl overflow-hidden">
       <Link
         href={`/products/${product.handle}`}
         className="block relative aspect-square overflow-hidden"
@@ -25,23 +25,23 @@ export default function ProductCardShopify({ product, showBadge }: Props) {
         <img
           src={image}
           alt={product.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {showBadge && isSchool && (
-          <span className="absolute top-3 left-3 bg-[#D35400] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded flex items-center gap-1">
+          <span className="absolute top-3 left-3 bg-[#E85D26] text-white text-[10px] font-bold uppercase tracking-widest px-2 py-1 rounded-full flex items-center gap-1">
             <Lock className="w-3 h-3" /> School Store
           </span>
         )}
       </Link>
       <div className="p-4">
         <Link href={`/products/${product.handle}`}>
-          <h3 className="font-heading font-semibold text-[#1A1A1A] hover:text-[#D35400] transition-colors">
+          <h3 className="font-semibold text-white hover:text-[#E85D26] transition-colors">
             {product.title}
           </h3>
         </Link>
         <div className="flex items-center justify-between mt-3">
-          <span className="text-lg font-bold text-[#D35400]">${price.toFixed(2)}</span>
-          <button className="bg-[#1A1A1A] hover:bg-[#D35400] text-white p-2 rounded-lg transition-colors">
+          <span className="text-lg font-bold text-[#E85D26]">${price.toFixed(2)}</span>
+          <button className="bg-[#E85D26] hover:bg-[#c94d1e] text-white p-2 rounded-lg transition-colors">
             <ShoppingCart className="w-4 h-4" />
           </button>
         </div>
