@@ -21,7 +21,7 @@ export interface Collection {
 
 export const collections: Collection[] = [
   {
-    handle: "ridgeline-academy",
+    handle: "ridgeline",
     name: "Ridgeline Academy",
     description: "Official apparel for Ridgeline Academy students, staff, and supporters.",
     locked: true,

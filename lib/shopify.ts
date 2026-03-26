@@ -86,7 +86,8 @@ const PRODUCT_FIELDS = `
 `;
 
 // Collection handles that are locked (school stores) — excluded from public shop
-export const LOCKED_COLLECTION_HANDLES = ["ridgeline-academy", "nvca", "dvhs"];
+// These must match the actual Shopify collection handles exactly
+export const LOCKED_COLLECTION_HANDLES = ["ridgeline", "nvca", "dvhs", "ridgeline-academy"];
 
 // Fetch all products (for shop page) — excludes locked school store products
 export async function getProducts(first = 50): Promise<ShopifyProduct[]> {
