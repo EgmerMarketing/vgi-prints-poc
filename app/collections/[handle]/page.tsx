@@ -2,23 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import ProductCard from "@/components/ProductCard";
+import ProductCardShopify from "@/components/ProductCardShopify";
 import TrustBar from "@/components/TrustBar";
-import {
-  getCollectionByHandle,
-  getProductsByCollection,
-} from "@/lib/mock-data";
+import { getCollectionByHandle } from "@/lib/mock-data";
 import { isCollectionUnlocked } from "@/lib/auth";
+import type { ShopifyProduct } from "@/lib/shopify";
 
 export default function CollectionPage() {
   const { handle } = useParams<{ handle: string }>();
   const router = useRouter();
   const [unlocked, setUnlocked] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [products, setProducts] = useState<ShopifyProduct[]>([]);
+  const [loading, setLoading] = useState(true);
 
+  // Collection metadata (locked/unlocked config still from mock-data)
   const collection = getCollectionByHandle(handle);
   const isAll = handle === "all";
-  const products = getProductsByCollection(handle);
 
   useEffect(() => {
     if (isAll || !collection?.locked) {
@@ -26,7 +26,6 @@ export default function CollectionPage() {
       setChecking(false);
       return;
     }
-
     if (isCollectionUnlocked(handle)) {
       setUnlocked(true);
       setChecking(false);
@@ -34,6 +33,24 @@ export default function CollectionPage() {
       router.replace(`/unlock/${handle}`);
     }
   }, [handle, isAll, collection, router]);
+
+  useEffect(() => {
+    if (!unlocked) return;
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const endpoint = isAll ? "/api/products" : `/api/collections/${handle}/products`;
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        setProducts(data);
+      } catch (e) {
+        console.error("Failed to fetch products", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [unlocked, handle, isAll]);
 
   if (checking) {
     return (
@@ -68,10 +85,14 @@ export default function CollectionPage() {
 
       <section className="py-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {unlocked && products.length > 0 ? (
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <div className="animate-pulse text-gray-400">Loading products...</div>
+            </div>
+          ) : products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} showBadge />
+                <ProductCardShopify key={product.id} product={product} showBadge />
               ))}
             </div>
           ) : (
