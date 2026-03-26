@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Lock, AlertCircle } from "lucide-react";
 import { getCollectionByHandle } from "@/lib/mock-data";
 import { isCollectionUnlocked, unlockCollection } from "@/lib/auth";
@@ -9,15 +9,17 @@ import { isCollectionUnlocked, unlockCollection } from "@/lib/auth";
 export default function UnlockPage() {
   const { handle } = useParams<{ handle: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next");
   const collection = getCollectionByHandle(handle);
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     if (collection && isCollectionUnlocked(handle)) {
-      router.replace(`/collections/${handle}`);
+      router.replace(next ?? `/collections/${handle}`);
     }
-  }, [handle, collection, router]);
+  }, [handle, collection, router, next]);
 
   if (!collection) {
     return (
@@ -34,7 +36,7 @@ export default function UnlockPage() {
     e.preventDefault();
     if (passcode === collection!.passcode) {
       unlockCollection(handle);
-      router.push(`/collections/${handle}`);
+      router.push(next ?? `/collections/${handle}`);
     } else {
       setError("Incorrect passcode. Please try again.");
       setPasscode("");
