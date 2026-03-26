@@ -86,29 +86,14 @@ const PRODUCT_FIELDS = `
 `;
 
 // Collection handles that are locked (school stores) — excluded from public shop
-// These must match the actual Shopify collection handles exactly
-export const LOCKED_COLLECTION_HANDLES = ["ridgeline", "nvca", "dvhs", "ridgeline-academy"];
+export const LOCKED_COLLECTION_HANDLES = ["ridgeline", "nvca", "dvhs"];
 
-// Fetch all products (for shop page) — excludes locked school store products
+// The public-facing collection handle — only these products show on Shop All
+export const PUBLIC_COLLECTION_HANDLE = "vgi-prints";
+
+// Fetch public products (for shop page) — only products in the vgi-prints collection
 export async function getProducts(first = 50): Promise<ShopifyProduct[]> {
-  const data = await shopifyFetch<{ products: { edges: Array<{ node: ShopifyProduct }> } }>(
-    `query GetProducts($first: Int!) {
-      products(first: $first) {
-        edges {
-          node { ${PRODUCT_FIELDS} }
-        }
-      }
-    }`,
-    { first }
-  );
-  return data.products.edges
-    .map((e) => e.node)
-    .filter(
-      (p) =>
-        !p.collections.edges.some((e) =>
-          LOCKED_COLLECTION_HANDLES.includes(e.node.handle)
-        )
-    );
+  return getCollectionProducts(PUBLIC_COLLECTION_HANDLE, first);
 }
 
 // Fetch a single product by handle
@@ -125,20 +110,20 @@ export async function getProductByHandle(handle: string): Promise<ShopifyProduct
 }
 
 // Fetch products in a Shopify collection by handle
-export async function getCollectionProducts(handle: string): Promise<ShopifyProduct[]> {
+export async function getCollectionProducts(handle: string, first = 50): Promise<ShopifyProduct[]> {
   const data = await shopifyFetch<{
     collectionByHandle: { products: { edges: Array<{ node: ShopifyProduct }> } } | null;
   }>(
-    `query GetCollectionProducts($handle: String!) {
+    `query GetCollectionProducts($handle: String!, $first: Int!) {
       collectionByHandle(handle: $handle) {
-        products(first: 50) {
+        products(first: $first) {
           edges {
             node { ${PRODUCT_FIELDS} }
           }
         }
       }
     }`,
-    { handle }
+    { handle, first }
   );
   return data.collectionByHandle?.products.edges.map((e) => e.node) ?? [];
 }
