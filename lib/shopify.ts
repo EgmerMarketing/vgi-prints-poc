@@ -85,7 +85,10 @@ const PRODUCT_FIELDS = `
   }
 `;
 
-// Fetch all products (for shop page)
+// Collection handles that are locked (school stores) — excluded from public shop
+export const LOCKED_COLLECTION_HANDLES = ["ridgeline-academy", "nvca", "dvhs"];
+
+// Fetch all products (for shop page) — excludes locked school store products
 export async function getProducts(first = 50): Promise<ShopifyProduct[]> {
   const data = await shopifyFetch<{ products: { edges: Array<{ node: ShopifyProduct }> } }>(
     `query GetProducts($first: Int!) {
@@ -97,7 +100,14 @@ export async function getProducts(first = 50): Promise<ShopifyProduct[]> {
     }`,
     { first }
   );
-  return data.products.edges.map((e) => e.node);
+  return data.products.edges
+    .map((e) => e.node)
+    .filter(
+      (p) =>
+        !p.collections.edges.some((e) =>
+          LOCKED_COLLECTION_HANDLES.includes(e.node.handle)
+        )
+    );
 }
 
 // Fetch a single product by handle
