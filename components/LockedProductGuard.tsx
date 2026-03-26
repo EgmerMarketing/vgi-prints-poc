@@ -1,22 +1,30 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, ReactNode } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { isCollectionUnlocked } from "@/lib/auth";
 
 interface Props {
-  lockedByCollection: string | null; // collection handle that locks this product, or null if public
+  lockedByCollection: string | null;
+  children: ReactNode;
 }
 
-export default function LockedProductGuard({ lockedByCollection }: Props) {
+export default function LockedProductGuard({ lockedByCollection, children }: Props) {
   const router = useRouter();
+  const pathname = usePathname();
+  const [allowed, setAllowed] = useState(!lockedByCollection); // public products show immediately
 
   useEffect(() => {
     if (!lockedByCollection) return;
-    if (!isCollectionUnlocked(lockedByCollection)) {
-      router.replace(`/unlock/${lockedByCollection}?next=/products/${window.location.pathname.split("/products/")[1]}`);
+    if (isCollectionUnlocked(lockedByCollection)) {
+      setAllowed(true);
+    } else {
+      router.replace(`/unlock/${lockedByCollection}?next=${pathname}`);
+      // stay hidden — redirect in progress
     }
-  }, [lockedByCollection, router]);
+  }, [lockedByCollection, router, pathname]);
 
-  return null; // renders nothing — just enforces the redirect
+  if (!allowed) return null; // blank while checking / redirecting
+
+  return <>{children}</>;
 }

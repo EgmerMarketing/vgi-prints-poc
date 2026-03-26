@@ -28,10 +28,8 @@ export default async function ProductDetailPage({
       .find((h) => LOCKED_COLLECTION_HANDLES.includes(h)) ?? null;
 
   return (
+    <LockedProductGuard lockedByCollection={lockedByCollection}>
     <div className="min-h-screen bg-[#0A0A0A]">
-      {/* Client-side auth guard — redirects to unlock page if collection is locked */}
-      <LockedProductGuard lockedByCollection={lockedByCollection} />
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Link
           href={lockedByCollection ? `/collections/${lockedByCollection}` : "/shop"}
@@ -86,5 +84,6 @@ export default async function ProductDetailPage({
         </div>
       </div>
     </div>
+    </LockedProductGuard>
   );
 }
